@@ -1,0 +1,3 @@
+{
+  "mongoURI": "mongodb+srv://kyle:Drums710@bandfinder-camth.mongodb.net/test?retryWrites=true&w=majority"
+}
