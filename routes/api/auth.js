@@ -27,12 +27,12 @@ router.get('/', auth, async (req, res) => {
 });
 
 // POST api/auth
-// Authenticate user & get token (Log In)
+// Log In
 router.post(
     "/",
     // Express-Validator Checks
     [
-        check("email", "Please include a valid email").isEmail(),
+        check("email", "Please include a valid email.").isEmail(),
         check(
             "password",
             "Password is required."
