@@ -27,7 +27,7 @@ router.post(
   ],
   // Asynchronous callback
   async (req, res) => {
-    // If any errors exist, send 400 Status
+    // If any errors exist, send 400 Status and error messages.
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
