@@ -8,22 +8,27 @@ const ProfileSchema = new mongoose.Schema({
         ref: 'user'
     },
     location: {
-        type: String
+        type: String,
+        required: true
     },
     bio: {
         type: String
     },
     instruments: {
-        type: [String]
+        type: [String],
+        required: true
     },
     projects: {
+        type: [String]
+    },
+    albums: {
         type: [String]
     },
     genres: {
         type: [String]
     },
     status: {
-        type: String
+        type: [String]
     },
     website: {
         type: String
