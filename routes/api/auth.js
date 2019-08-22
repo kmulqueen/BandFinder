@@ -90,7 +90,8 @@ router.post(
             jwt.sign(
                 payload,
                 config.get("jwtSecret"), {
-                    expiresIn: 3600
+                    // Change to 3600 for 1 hour <<<<<<<<<<<<<<<======================== TODO TODO TODO TODO
+                    expiresIn: 3600000000000000000
                 },
                 // Send back token
                 (err, token) => {

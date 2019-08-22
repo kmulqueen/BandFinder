@@ -188,7 +188,7 @@ router.delete('/', auth, async (req, res) => {
 })
 
 // GET api/profile/followers/:user_id
-// Get followers
+// Get user's followers
 // Private
 router.get('/followers/:user_id', auth, async (req, res) => {
     try {
@@ -200,7 +200,7 @@ router.get('/followers/:user_id', auth, async (req, res) => {
             msg: "User has no followers."
         });
 
-        res.json(profile.followers)
+        res.json(profile)
     } catch (error) {
         console.error(error.message);
         res.status(500).send("Server Error.")
@@ -230,6 +230,44 @@ router.put('/follow/:user_id', auth, async (req, res) => {
         }
         res.status(400).json({
             msg: "Already following this user."
+        })
+
+
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).send("Server Error.")
+    }
+})
+
+// DELETE api/profile/follow/:user_id
+// Unfollow user
+// Private
+router.delete('/follow/:user_id', auth, async (req, res) => {
+    try {
+        const profile = await Profile.findOne({
+            user: req.user.id
+        }).populate('user', ['name']);
+        const userToUnfollow = await Profile.findOne({
+            user: req.params.user_id
+        }).populate('user', ['name']);
+
+        // Check to see if profile exists in user's followers
+        if (userToUnfollow.followers.includes(profile.user._id)) {
+            const followers = userToUnfollow.followers;
+            const following = profile.following;
+            const updatedFollowers = followers.filter(person => person.toString() !== profile.user._id.toString());
+            const updatedFollowing = following.filter(person => person.toString() !== userToUnfollow.user._id.toString());
+            userToUnfollow.followers = updatedFollowers;
+            profile.following = updatedFollowing;
+
+            await profile.save();
+            await userToUnfollow.save()
+            return res.status(200).json(profile)
+
+        }
+        // If they don't exist in user's followers
+        res.status(400).json({
+            msg: "You are not yet following this user."
         })
 
 
