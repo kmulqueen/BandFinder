@@ -187,6 +187,58 @@ router.delete('/', auth, async (req, res) => {
     }
 })
 
+// GET api/profile/followers/:user_id
+// Get followers
+// Private
+router.get('/followers/:user_id', auth, async (req, res) => {
+    try {
+        const profile = await Profile.findOne({
+            user: req.params.user_id
+        });
+
+        if (profile.followers.length === 0) return res.status(400).json({
+            msg: "User has no followers."
+        });
+
+        res.json(profile.followers)
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).send("Server Error.")
+    }
+})
+
+// PUT api/profile/follow/:user_id
+// Follow user
+// Private
+router.put('/follow/:user_id', auth, async (req, res) => {
+    try {
+        const profile = await Profile.findOne({
+            user: req.user.id
+        }).populate('user', ['name']);
+        const userToFollow = await Profile.findOne({
+            user: req.params.user_id
+        }).populate('user', ['name']);
+
+        // Check to see if user is already being followed
+        if (!userToFollow.followers.includes(profile.user._id)) {
+            profile.following.unshift(userToFollow.user._id);
+            userToFollow.followers.unshift(profile.user._id);
+
+            await profile.save();
+            await userToFollow.save();
+            return res.status(200).json(profile)
+        }
+        res.status(400).json({
+            msg: "Already following this user."
+        })
+
+
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).send("Server Error.")
+    }
+})
+
 
 
 module.exports = router;
