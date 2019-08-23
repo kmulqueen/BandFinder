@@ -58,21 +58,23 @@ const ProfileSchema = new mongoose.Schema({
 
     },
     followers: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'user'
+        user: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'user'
+        },
+        name: {
+            type: String
+        }
     }],
     following: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'user'
-    }],
-    // followers: {
-    //     type: [mongoose.Schema.Types.ObjectId],
-    //     ref: 'user'
-    // },
-    // following: {
-    //     type: [mongoose.Schema.Types.ObjectId],
-    //     ref: 'user'
-    // }
+        user: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'user'
+        },
+        name: {
+            type: String
+        }
+    }]
 });
 
 module.exports = Profile = mongoose.model('profile', ProfileSchema);

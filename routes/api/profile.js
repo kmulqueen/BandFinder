@@ -194,7 +194,7 @@ router.get('/followers/:user_id', auth, async (req, res) => {
     try {
         const profile = await Profile.findOne({
             user: req.params.user_id
-        });
+        }).populate('user', ['name']);
 
         if (profile.followers.length === 0) return res.status(400).json({
             msg: "User has no followers."
@@ -219,15 +219,25 @@ router.put('/follow/:user_id', auth, async (req, res) => {
             user: req.params.user_id
         }).populate('user', ['name']);
 
-        // Check to see if user is already being followed
-        if (!userToFollow.followers.includes(profile.user._id)) {
-            profile.following.unshift(userToFollow.user._id);
-            userToFollow.followers.unshift(profile.user._id);
+        // Check to see if profile is already following user
+        let alreadyFollowing = userToFollow.followers.filter(follower => (follower.user.toString() === profile.user._id.toString()));
+        if (!alreadyFollowing.length) {
+            const newFollowing = {
+                user: userToFollow.user._id,
+                name: userToFollow.user.name
+            };
+            const newFollower = {
+                user: profile.user._id,
+                name: profile.user.name
+            }
+            profile.following.unshift(newFollowing);
+            userToFollow.followers.unshift(newFollower);
 
             await profile.save();
             await userToFollow.save();
             return res.status(200).json(profile)
         }
+
         res.status(400).json({
             msg: "Already following this user."
         })
@@ -252,18 +262,18 @@ router.delete('/follow/:user_id', auth, async (req, res) => {
         }).populate('user', ['name']);
 
         // Check to see if profile exists in user's followers
-        if (userToUnfollow.followers.includes(profile.user._id)) {
+        let isFollowing = userToUnfollow.followers.filter(follower => follower.user.toString() === profile.user._id.toString());
+        if (isFollowing.length) {
             const followers = userToUnfollow.followers;
             const following = profile.following;
-            const updatedFollowers = followers.filter(person => person.toString() !== profile.user._id.toString());
-            const updatedFollowing = following.filter(person => person.toString() !== userToUnfollow.user._id.toString());
+            const updatedFollowers = followers.filter(person => person.user.toString() !== profile.user._id.toString());
+            const updatedFollowing = following.filter(person => person.user.toString() !== userToUnfollow.user._id.toString());
             userToUnfollow.followers = updatedFollowers;
             profile.following = updatedFollowing;
 
             await profile.save();
             await userToUnfollow.save()
             return res.status(200).json(profile)
-
         }
         // If they don't exist in user's followers
         res.status(400).json({
