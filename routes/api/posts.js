@@ -172,4 +172,93 @@ router.put('/unlike/:id', auth, async (req, res) => {
     }
 })
 
+// POST api/posts/comment/:id
+// Comment on a post
+// Private
+router.post('/comment/:id', [auth,
+    check('text', 'Text is required').not().isEmpty()
+], async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({
+            errors: errors.array()
+        });
+    }
+
+    try {
+        const user = await User.findById(req.user.id).select('-password');
+        const post = await Post.findById(req.params.id);
+
+        const newcomment = {
+            text: req.body.text,
+            name: user.name,
+            user: req.user.id
+        }
+
+        post.comments.unshift(newcomment)
+        await post.save()
+        res.json(post.comments)
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).send("Server Error.")
+    }
+
+})
+
+// POST api/posts/comment/like/:post_id/:comment_id
+// Like a comment on a post
+// Private
+router.post('/comment/like/:post_id/:comment_id', auth, async (req, res) => {
+    try {
+        const post = await Post.findById(req.params.post_id);
+        const comment = post.comments.filter(comment => comment._id.toString() === req.params.comment_id);
+
+        // Check if comment has already been liked
+        if (comment[0].likes.filter(like => like.user.toString() === req.user.id).length) {
+            return res.status(400).json({
+                msg: "Comment has already been liked."
+            })
+        }
+        comment[0].likes.unshift({
+            user: req.user.id
+        })
+
+        await post.save();
+        res.json(post)
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).send("Server Error")
+    }
+
+
+})
+
+// PUT api/posts/comment/unlike/:post_id/:comment_id
+// Remove Like from comment on post
+// Private
+router.put('/comment/unlike/:post_id/:comment_id', auth, async (req, res) => {
+    try {
+        const post = await Post.findById(req.params.post_id);
+        const comment = post.comments.filter(comment => comment._id.toString() === req.params.comment_id);
+
+
+        // Check if comment has been liked by user
+        if (comment[0].likes.filter(like => like.user.toString() === req.user.id).length === 0) {
+            return res.status(400).json({
+                msg: "Comment has not yet been liked."
+            })
+        }
+
+        const updated = comment[0].likes.filter(like => like.user.toString() !== req.user.id);
+        comment[0].likes = updated;
+
+        await post.save();
+        res.json(comment[0].likes)
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).send("Server Error.")
+
+    }
+})
+
 module.exports = router;
