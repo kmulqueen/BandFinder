@@ -205,6 +205,40 @@ router.post('/comment/:id', [auth,
 
 })
 
+// DELETE api/posts/comment/:post_id/:comment_id
+// Delete comment from post
+// Private
+router.delete('/comment/:post_id/:comment_id', auth, async (req, res) => {
+    try {
+        const post = await Post.findById(req.params.post_id);
+        const comment = post.comments.find(comment => comment.id === req.params.comment_id);
+
+        if (!comment) {
+            return res.status(404).json({
+                msg: "Comment not found."
+            })
+        }
+
+        // Check if user created comment
+        if (comment.user.toString() !== req.user.id) {
+            return res.status(401).json({
+                msg: "User not authorized."
+            })
+        }
+
+        const updated = post.comments.filter(comment => comment.user.toString() !== req.user.id);
+        post.comments = updated;
+
+        await post.save();
+        res.json(post.comments)
+
+
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).send("Server Error.")
+    }
+})
+
 // POST api/posts/comment/like/:post_id/:comment_id
 // Like a comment on a post
 // Private
