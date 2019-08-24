@@ -245,20 +245,27 @@ router.delete('/comment/:post_id/:comment_id', auth, async (req, res) => {
 router.post('/comment/like/:post_id/:comment_id', auth, async (req, res) => {
     try {
         const post = await Post.findById(req.params.post_id);
-        const comment = post.comments.filter(comment => comment._id.toString() === req.params.comment_id);
+        const comment = post.comments.find(comment => comment.id === req.params.comment_id);
+
+        // Check if comment exists
+        if (!comment) {
+            return res.status(404).json({
+                msg: "Comment not found."
+            })
+        }
 
         // Check if comment has already been liked
-        if (comment[0].likes.filter(like => like.user.toString() === req.user.id).length) {
+        if (comment.likes.filter(like => like.user.toString() === req.user.id).length) {
             return res.status(400).json({
                 msg: "Comment has already been liked."
             })
         }
-        comment[0].likes.unshift({
+        comment.likes.unshift({
             user: req.user.id
         })
 
         await post.save();
-        res.json(post)
+        res.json(comment.likes)
     } catch (error) {
         console.error(error.message);
         res.status(500).send("Server Error")
@@ -273,23 +280,28 @@ router.post('/comment/like/:post_id/:comment_id', auth, async (req, res) => {
 router.put('/comment/unlike/:post_id/:comment_id', auth, async (req, res) => {
     try {
         const post = await Post.findById(req.params.post_id);
-        const comment = post.comments.filter(comment => comment._id.toString() === req.params.comment_id);
+        const comment = post.comments.find(comment => comment.id === req.params.comment_id);
 
-
+        // Check if comment exists
+        if (!comment) {
+            return res.status(404).json({
+                msg: "Comment not found."
+            })
+        }
         // Check if comment has been liked by user
-        if (comment[0].likes.filter(like => like.user.toString() === req.user.id).length === 0) {
+        if (comment.likes.filter(like => like.user.toString() === req.user.id).length === 0) {
             return res.status(400).json({
                 msg: "Comment has not yet been liked."
             })
         }
 
-        const updated = comment[0].likes.filter(like => like.user.toString() !== req.user.id);
-        comment[0].likes = updated;
+        const updated = comment.likes.filter(like => like.user.toString() !== req.user.id);
+        comment.likes = updated;
 
         await post.save();
-        res.json(comment[0].likes)
+        res.json(comment.likes)
     } catch (error) {
-        console.error(error.message);
+        console.error(error);
         res.status(500).send("Server Error.")
 
     }
