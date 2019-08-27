@@ -31,6 +31,7 @@ router.post('/', [auth,
         const newPost = new Post({
             text: req.body.text,
             name: user.name,
+            avatar: user.avatar,
             user: req.user.id
         })
 
@@ -128,6 +129,13 @@ router.put('/like/:id', auth, async (req, res) => {
     try {
         const post = await Post.findById(req.params.id);
 
+        // Check if post exists
+        if (!post) {
+            return res.status(404).json({
+                msg: "Post not found."
+            })
+        }
+
         // Check if post has already been liked by user
         if (post.likes.filter(like => like.user.toString() === req.user.id).length) {
             return res.status(400).json({
@@ -152,6 +160,13 @@ router.put('/like/:id', auth, async (req, res) => {
 router.put('/unlike/:id', auth, async (req, res) => {
     try {
         const post = await Post.findById(req.params.id);
+
+        // Check if post exists
+        if (!post) {
+            return res.status(404).json({
+                msg: "Post not found."
+            })
+        }
 
         // Check if post has been liked by user
         if (post.likes.filter(like => like.user.toString() === req.user.id).length === 0) {
@@ -192,9 +207,15 @@ router.post('/comment/:id', [auth,
         const newcomment = {
             text: req.body.text,
             name: user.name,
+            avatar: user.avatar,
             user: req.user.id
         }
 
+        if (!post) {
+            return res.status(404).json({
+                msg: "Post not found."
+            })
+        }
         post.comments.unshift(newcomment)
         await post.save()
         res.json(post.comments)
@@ -211,8 +232,17 @@ router.post('/comment/:id', [auth,
 router.delete('/comment/:post_id/:comment_id', auth, async (req, res) => {
     try {
         const post = await Post.findById(req.params.post_id);
+
+        // Check if post exists
+        if (!post) {
+            return res.status(404).json({
+                msg: "Post not found."
+            })
+        }
+
         const comment = post.comments.find(comment => comment.id === req.params.comment_id);
 
+        // Check if comment exists
         if (!comment) {
             return res.status(404).json({
                 msg: "Comment not found."
@@ -245,6 +275,14 @@ router.delete('/comment/:post_id/:comment_id', auth, async (req, res) => {
 router.post('/comment/like/:post_id/:comment_id', auth, async (req, res) => {
     try {
         const post = await Post.findById(req.params.post_id);
+
+        // Check if post exists
+        if (!post) {
+            return res.status(404).json({
+                msg: "Post not found."
+            })
+        }
+
         const comment = post.comments.find(comment => comment.id === req.params.comment_id);
 
         // Check if comment exists
@@ -280,6 +318,13 @@ router.post('/comment/like/:post_id/:comment_id', auth, async (req, res) => {
 router.put('/comment/unlike/:post_id/:comment_id', auth, async (req, res) => {
     try {
         const post = await Post.findById(req.params.post_id);
+
+        // Check if post exists
+        if (!post) {
+            return res.status(404).json({
+                msg: "Post not found."
+            })
+        }
         const comment = post.comments.find(comment => comment.id === req.params.comment_id);
 
         // Check if comment exists

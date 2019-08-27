@@ -1,6 +1,7 @@
 const express = require("express");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const gravatar = require('gravatar');
 const config = require("config");
 const {
   check,
@@ -61,8 +62,15 @@ router.post(
           });
       }
 
+      const avatar = gravatar.url(email, {
+        s: '200',
+        r: 'pg',
+        d: 'mm'
+      })
+
       user = new User({
         name,
+        avatar,
         email,
         password
       });

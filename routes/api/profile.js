@@ -19,7 +19,7 @@ router.get('/me', auth, async (req, res) => {
     try {
         const profile = await Profile.findOne({
             user: req.user.id
-        }).populate('user', ['name']);
+        }).populate('user', ['name', 'avatar']);
 
         if (!profile) {
             return res.status(400).json({
@@ -133,7 +133,7 @@ router.post('/', [auth, [
 // Get all profiles
 router.get('/', async (req, res) => {
     try {
-        const profiles = await Profile.find().populate('user', ['name']);
+        const profiles = await Profile.find().populate('user', ['name', 'avatar']);
         res.json(profiles);
     } catch (error) {
         console.error(error.message);
@@ -147,7 +147,7 @@ router.get('/user/:user_id', async (req, res) => {
     try {
         const profile = await Profile.findOne({
             user: req.params.user_id
-        }).populate('user', ['name']);
+        }).populate('user', ['name', 'avatar']);
 
         if (!profile) return res.status(400).json({
             msg: "No profile exists for this user."
@@ -194,7 +194,7 @@ router.get('/followers/:user_id', auth, async (req, res) => {
     try {
         const profile = await Profile.findOne({
             user: req.params.user_id
-        }).populate('user', ['name']);
+        }).populate('user', ['name', 'avatar']);
 
         if (profile.followers.length === 0) return res.status(400).json({
             msg: "User has no followers."
@@ -214,10 +214,10 @@ router.put('/follow/:user_id', auth, async (req, res) => {
     try {
         const profile = await Profile.findOne({
             user: req.user.id
-        }).populate('user', ['name']);
+        }).populate('user', ['name', 'avatar']);
         const userToFollow = await Profile.findOne({
             user: req.params.user_id
-        }).populate('user', ['name']);
+        }).populate('user', ['name', 'avatar']);
 
         // Check to see if profile is already following user
         let alreadyFollowing = userToFollow.followers.filter(follower => (follower.user.toString() === profile.user._id.toString()));
@@ -256,10 +256,10 @@ router.delete('/follow/:user_id', auth, async (req, res) => {
     try {
         const profile = await Profile.findOne({
             user: req.user.id
-        }).populate('user', ['name']);
+        }).populate('user', ['name', 'avatar']);
         const userToUnfollow = await Profile.findOne({
             user: req.params.user_id
-        }).populate('user', ['name']);
+        }).populate('user', ['name', 'avatar']);
 
         // Check to see if profile exists in user's followers
         let isFollowing = userToUnfollow.followers.filter(follower => follower.user.toString() === profile.user._id.toString());
