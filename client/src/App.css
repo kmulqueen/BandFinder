@@ -554,7 +554,8 @@ img {
     .dash-buttons a {
         display: block;
         width: 100%;
-        margin-bottom: 1rem
+        margin-bottom: 1rem;
+
     }
 
     .profile {

@@ -1,13 +1,20 @@
-import React, { Fragment, useState } from "react";
+import React, { Fragment, useState, useEffect } from "react";
 import { Link, withRouter } from "react-router-dom";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
-import { createProfile } from "../../actions/profile";
+import { createProfile, getCurrentProfile } from "../../actions/profile";
+import { check } from "express-validator";
 
-const CreateProfile = ({ createProfile, history }) => {
+const EditProfile = ({
+  profile: { profile, loading },
+  createProfile,
+  getCurrentProfile,
+  history
+}) => {
   const [formData, setFormData] = useState({
     status: [],
     projects: [],
+    albums: [],
     website: "",
     location: "",
     instruments: [],
@@ -35,6 +42,7 @@ const CreateProfile = ({ createProfile, history }) => {
   const {
     status,
     projects,
+    albums,
     website,
     location,
     instruments,
@@ -61,14 +69,57 @@ const CreateProfile = ({ createProfile, history }) => {
     }
   };
 
+  const getCheck = key => {
+    console.log(`loading ${loading}`);
+    console.log(checkbox[key]);
+  };
+
   const onChange = e => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const onSubmit = e => {
     e.preventDefault();
-    createProfile(formData, history);
+    createProfile(formData, history, true);
   };
+
+  useEffect(() => {
+    getCurrentProfile();
+    if (profile) {
+      console.log(profile.status);
+      const keys = Object.keys(checkbox);
+      console.log(keys);
+
+      profile.status.map(item => {
+        keys.map(key => {
+          if (key === item.toLowerCase()) {
+            if (checkbox[key] === false) {
+              checkbox[key] = true;
+            }
+          }
+        });
+      });
+      console.log(`checkbox ${checkbox}`);
+    }
+
+    setFormData({
+      status: loading || !profile.status ? "" : profile.status,
+      projects: loading || !profile.projects ? "" : profile.projects.join(","),
+      albums: loading || !profile.albums ? "" : profile.albums.join(","),
+      website: loading || !profile.website ? "" : profile.website,
+      location: loading || !profile.location ? "" : profile.location,
+      instruments:
+        loading || !profile.instruments ? "" : profile.instruments.join(","),
+      bio: loading || !profile.bio ? "" : profile.bio,
+      twitter: loading || !profile.social ? "" : profile.social.twitter,
+      facebook: loading || !profile.social ? "" : profile.social.facebook,
+      instagram: loading || !profile.social ? "" : profile.social.instagram,
+      youtube: loading || !profile.social ? "" : profile.social.youtube,
+      soundcloud: loading || !profile.social ? "" : profile.social.soundcloud,
+      spotify: loading || !profile.social ? "" : profile.social.spotify,
+      itunes: loading || !profile.social ? "" : profile.social.itunes
+    });
+  }, [loading]);
 
   return (
     <Fragment>
@@ -193,6 +244,19 @@ const CreateProfile = ({ createProfile, history }) => {
           </small>
         </div>
         <div className="form-group">
+          <input
+            type="text"
+            placeholder="Albums"
+            name="albums"
+            value={albums}
+            onChange={e => onChange(e)}
+          />
+          <small className="form-text">
+            List any albums you have played on. Use a comma to seperate items
+            (eg. Album 1 - Band Name, Album 2 - Band Name, etc.).
+          </small>
+        </div>
+        <div className="form-group">
           <textarea
             name="bio"
             placeholder="A short bio of yourself"
@@ -298,11 +362,17 @@ const CreateProfile = ({ createProfile, history }) => {
   );
 };
 
-CreateProfile.propTypes = {
-  createProfile: PropTypes.func.isRequired
+EditProfile.propTypes = {
+  createProfile: PropTypes.func.isRequired,
+  getCurrentProfile: PropTypes.func.isRequired,
+  profile: PropTypes.object.isRequired
 };
 
+const mapStateToProps = state => ({
+  profile: state.profile
+});
+
 export default connect(
-  null,
-  { createProfile }
-)(withRouter(CreateProfile));
+  mapStateToProps,
+  { createProfile, getCurrentProfile }
+)(withRouter(EditProfile));
