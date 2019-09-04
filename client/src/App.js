@@ -16,6 +16,7 @@ import Dashboard from "./components/dashboard/Dashboard";
 import PrivateRoute from "./components/routing/PrivateRoute";
 import CreateProfile from "./components/profile-form/CreateProfile";
 import EditProfile from "./components/profile-form/EditProfile";
+import Profiles from "./components/profiles/Profiles";
 
 // CSS
 import "./App.css";
@@ -52,6 +53,7 @@ const App = () => {
                 path="/edit-profile"
                 component={EditProfile}
               />
+              <Route exact path="/profiles" component={Profiles} />
             </Switch>
           </section>
         </Fragment>

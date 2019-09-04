@@ -1,19 +1,43 @@
-import React, { useEffect, Fragment } from "react";
+import React, { useEffect, useState, Fragment } from "react";
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 import { connect } from "react-redux";
-import { getCurrentProfile } from "../../actions/profile";
+import {
+  getCurrentProfile,
+  deleteAccount,
+  getAllProfiles,
+  getCurrentFollowInfo
+} from "../../actions/profile";
 import Spinner from "../layout/Spinner";
 import DashboardActions from "./DashboardActions";
+import Followers from "./Followers";
+import Following from "./Following";
 
 const Dashboard = ({
   getCurrentProfile,
+  getCurrentFollowInfo,
+  getAllProfiles,
+  deleteAccount,
   auth: { user },
   profile: { profile, loading }
 }) => {
   useEffect(() => {
     getCurrentProfile();
+    getAllProfiles();
+    getCurrentFollowInfo();
   }, []);
+
+  const [displayFollowers, toggleFollowers] = useState(false);
+  const [displayFollowing, toggleFollowing] = useState(false);
+
+  const handleFollowers = () => {
+    toggleFollowers(!displayFollowers);
+    toggleFollowing(false);
+  };
+  const handleFollowing = () => {
+    toggleFollowing(!displayFollowing);
+    toggleFollowers(false);
+  };
 
   return loading && profile === null ? (
     <Spinner />
@@ -25,7 +49,20 @@ const Dashboard = ({
       </p>
       {profile !== null ? (
         <Fragment>
-          <DashboardActions />
+          <DashboardActions
+            handleFollowers={handleFollowers}
+            handleFollowing={handleFollowing}
+          />
+          <div className="profiles">
+            <Followers
+              displayFollowers={displayFollowers}
+              followers={profile.followers}
+            />
+            <Following
+              displayFollowing={displayFollowing}
+              following={profile.following}
+            />
+          </div>
         </Fragment>
       ) : (
         <Fragment>
@@ -43,7 +80,7 @@ const Dashboard = ({
       )}
 
       <div className="my-2">
-        <button className="btn btn-danger">
+        <button className="btn btn-danger" onClick={() => deleteAccount()}>
           <i className="fas fa-user-minus"></i> Delete My Account
         </button>
       </div>
@@ -53,6 +90,9 @@ const Dashboard = ({
 
 Dashboard.propTypes = {
   getCurrentProfile: PropTypes.func.isRequired,
+  getCurrentFollowInfo: PropTypes.func.isRequired,
+  getAllProfiles: PropTypes.func.isRequired,
+  deleteAccount: PropTypes.func.isRequired,
   auth: PropTypes.object.isRequired,
   profile: PropTypes.object.isRequired
 };
@@ -64,5 +104,10 @@ const mapStateToProps = state => ({
 
 export default connect(
   mapStateToProps,
-  { getCurrentProfile }
+  {
+    getCurrentProfile,
+    getAllProfiles,
+    deleteAccount,
+    getCurrentFollowInfo
+  }
 )(Dashboard);

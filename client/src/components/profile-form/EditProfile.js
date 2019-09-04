@@ -3,7 +3,6 @@ import { Link, withRouter } from "react-router-dom";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import { createProfile, getCurrentProfile } from "../../actions/profile";
-import { check } from "express-validator";
 
 const EditProfile = ({
   profile: { profile, loading },
@@ -69,11 +68,6 @@ const EditProfile = ({
     }
   };
 
-  const getCheck = key => {
-    console.log(`loading ${loading}`);
-    console.log(checkbox[key]);
-  };
-
   const onChange = e => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -83,24 +77,25 @@ const EditProfile = ({
     createProfile(formData, history, true);
   };
 
-  useEffect(() => {
-    getCurrentProfile();
+  const getStatus = () => {
     if (profile) {
-      console.log(profile.status);
       const keys = Object.keys(checkbox);
-      console.log(keys);
-
+      // Updating the checkbox with the user's existing statuses
       profile.status.map(item => {
         keys.map(key => {
           if (key === item.toLowerCase()) {
             if (checkbox[key] === false) {
-              checkbox[key] = true;
+              return (checkbox[key] = true);
             }
           }
         });
       });
-      console.log(`checkbox ${checkbox}`);
     }
+  };
+
+  useEffect(() => {
+    getCurrentProfile();
+    getStatus();
 
     setFormData({
       status: loading || !profile.status ? "" : profile.status,
@@ -353,7 +348,11 @@ const EditProfile = ({
           </Fragment>
         )}
 
-        <input type="submit" value="Submit" className="btn btn-primary my-1" />
+        <input
+          type="submit"
+          value="Submit Changes"
+          className="btn btn-primary my-1"
+        />
         <Link to="/dashboard" className="btn btn-light my-1">
           Go Back
         </Link>

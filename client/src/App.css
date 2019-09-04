@@ -551,6 +551,8 @@ img {
         margin-bottom: 1rem
     }
 
+
+
     .dash-buttons a {
         display: block;
         width: 100%;
@@ -563,6 +565,7 @@ img {
         grid-template-columns: 1fr;
         text-align: center
     }
+
 
     ul {
         display: -webkit-box;

@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const Profile = require("../../models/Profile");
+const Post = require("../../models/Post");
 const User = require("../../models/User");
 const auth = require("../../middleware/auth");
 const { check, validationResult } = require("express-validator");
@@ -188,9 +189,13 @@ router.get("/user/:user_id", async (req, res) => {
 // Private
 router.delete("/", auth, async (req, res) => {
   try {
+    // Delete Posts by User
+    await Post.deleteMany({ user: req.user.id });
+    // Delete User's Profile
     await Profile.findOneAndRemove({
       user: req.user.id
     });
+    // Delete User
     await User.findOneAndRemove({
       _id: req.user.id
     });
@@ -211,7 +216,9 @@ router.get("/followers/:user_id", auth, async (req, res) => {
   try {
     const profile = await Profile.findOne({
       user: req.params.user_id
-    }).populate("user", ["name", "avatar"]);
+    })
+      .populate("user", ["name", "avatar"])
+      .populate("profile");
 
     if (profile.followers.length === 0)
       return res.status(400).json({
@@ -232,29 +239,52 @@ router.put("/follow/:user_id", auth, async (req, res) => {
   try {
     const profile = await Profile.findOne({
       user: req.user.id
-    }).populate("user", ["name", "avatar"]);
+    })
+      .populate("user", ["name", "avatar"])
+      .populate("profile", ["instruments", "status", "location"]);
+
     const userToFollow = await Profile.findOne({
       user: req.params.user_id
-    }).populate("user", ["name", "avatar"]);
+    })
+      .populate("user", ["name", "avatar"])
+      .populate("profile", ["instruments", "status", "location"]);
 
     // Check to see if profile is already following user
     let alreadyFollowing = userToFollow.followers.filter(
       follower => follower.user.toString() === profile.user._id.toString()
     );
+
+    let toFollowInfo = {
+      profileId: userToFollow._id,
+      instruments: userToFollow.instruments,
+      status: userToFollow.status,
+      location: userToFollow.location
+    };
+    let followerInfo = {
+      profileId: profile._id,
+      instruments: profile.instruments,
+      status: profile.status,
+      location: profile.location
+    };
     if (!alreadyFollowing.length) {
       const newFollowing = {
         user: userToFollow.user._id,
-        name: userToFollow.user.name
+        name: userToFollow.user.name,
+        avatar: userToFollow.user.avatar,
+        info: toFollowInfo
       };
       const newFollower = {
         user: profile.user._id,
-        name: profile.user.name
+        name: profile.user.name,
+        avatar: profile.user.avatar,
+        info: followerInfo
       };
       profile.following.unshift(newFollowing);
       userToFollow.followers.unshift(newFollower);
 
       await profile.save();
       await userToFollow.save();
+      console.log(newFollowing);
       return res.status(200).json(profile);
     }
 
@@ -262,7 +292,7 @@ router.put("/follow/:user_id", auth, async (req, res) => {
       msg: "Already following this user."
     });
   } catch (error) {
-    console.error(error.message);
+    console.error(error);
     res.status(500).send("Server Error.");
   }
 });
