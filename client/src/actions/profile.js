@@ -98,6 +98,8 @@ export const getProfileById = userId => async dispatch => {
 };
 
 // Get Current User's Followers & Following
+// (ONLY REASON I'M DOING THIS IS TO GET THE UPDATED FOLLOWER/FOLLOWING INFO IF THAT USER HAS UPDATED THEIR INFO)
+// (THE FOLLOWER/FOLLOWING IN THE DATABASE IS LOCKED IN AT THE MOMENT THE USER FOLLOWS THEM, SO ANY UPDATES LIKE STATUS, LOCATION, ETC. WILL NOT SHOW UP UNLESS I DO THIS)
 export const getCurrentFollowInfo = () => async dispatch => {
   try {
     // Get all profiles
