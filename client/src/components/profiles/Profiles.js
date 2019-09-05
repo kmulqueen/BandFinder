@@ -8,7 +8,7 @@ import ProfileItem from "./ProfileItem";
 const Profiles = ({ profile: { profiles, loading }, getAllProfiles }) => {
   useEffect(() => {
     getAllProfiles();
-  }, []);
+  }, [getAllProfiles]);
 
   return (
     <Fragment>
@@ -18,7 +18,8 @@ const Profiles = ({ profile: { profiles, loading }, getAllProfiles }) => {
         <Fragment>
           <h1 className="large text-primary">Community</h1>
           <p className="lead">
-            <i className="fas fa-icons"></i> Browse and connect with musicians
+            <i className="fas fa-icons"></i> Connect with musicians & industry
+            experts
           </p>
           <div className="profiles">
             {profiles.length ? (

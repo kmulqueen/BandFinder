@@ -17,6 +17,7 @@ import PrivateRoute from "./components/routing/PrivateRoute";
 import CreateProfile from "./components/profile-form/CreateProfile";
 import EditProfile from "./components/profile-form/EditProfile";
 import Profiles from "./components/profiles/Profiles";
+import Profile from "./components/profile/Profile";
 
 // CSS
 import "./App.css";
@@ -54,6 +55,7 @@ const App = () => {
                 component={EditProfile}
               />
               <Route exact path="/profiles" component={Profiles} />
+              <Route exact path="/profile/:id" component={Profile} />
             </Switch>
           </section>
         </Fragment>

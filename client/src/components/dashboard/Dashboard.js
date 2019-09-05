@@ -5,7 +5,6 @@ import { connect } from "react-redux";
 import {
   getCurrentProfile,
   deleteAccount,
-  getAllProfiles,
   getCurrentFollowInfo
 } from "../../actions/profile";
 import Spinner from "../layout/Spinner";
@@ -16,16 +15,14 @@ import Following from "./Following";
 const Dashboard = ({
   getCurrentProfile,
   getCurrentFollowInfo,
-  getAllProfiles,
   deleteAccount,
   auth: { user },
   profile: { profile, loading }
 }) => {
   useEffect(() => {
     getCurrentProfile();
-    getAllProfiles();
     getCurrentFollowInfo();
-  }, []);
+  }, [getCurrentProfile, getCurrentFollowInfo]);
 
   const [displayFollowers, toggleFollowers] = useState(false);
   const [displayFollowing, toggleFollowing] = useState(false);
@@ -91,7 +88,6 @@ const Dashboard = ({
 Dashboard.propTypes = {
   getCurrentProfile: PropTypes.func.isRequired,
   getCurrentFollowInfo: PropTypes.func.isRequired,
-  getAllProfiles: PropTypes.func.isRequired,
   deleteAccount: PropTypes.func.isRequired,
   auth: PropTypes.object.isRequired,
   profile: PropTypes.object.isRequired
@@ -106,7 +102,7 @@ export default connect(
   mapStateToProps,
   {
     getCurrentProfile,
-    getAllProfiles,
+
     deleteAccount,
     getCurrentFollowInfo
   }

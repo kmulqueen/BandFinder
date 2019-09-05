@@ -114,7 +114,7 @@ const EditProfile = ({
       spotify: loading || !profile.social ? "" : profile.social.spotify,
       itunes: loading || !profile.social ? "" : profile.social.itunes
     });
-  }, [loading]);
+  }, [loading, getCurrentProfile]);
 
   return (
     <Fragment>

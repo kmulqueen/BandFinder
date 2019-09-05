@@ -77,6 +77,14 @@ router.post(
       itunes
     } = req.body;
 
+    // Check urls for https://
+    const checkUrl = url => {
+      if (!/^(f|ht)tps?:\/\//i.test(url)) {
+        url = `https://${url}`;
+      }
+      return url;
+    };
+
     // Build profile object
     const profileFields = {};
     profileFields.user = req.user.id;
@@ -101,17 +109,17 @@ router.post(
     if (status) {
       profileFields.status = status.map(item => item.trim());
     }
-    if (website) profileFields.website = website;
+    if (website) profileFields.website = checkUrl(website);
 
     // Build social object
     profileFields.social = {};
-    if (facebook) profileFields.social.facebook = facebook;
-    if (instagram) profileFields.social.instagram = instagram;
-    if (twitter) profileFields.social.twitter = twitter;
-    if (youtube) profileFields.social.youtube = youtube;
-    if (spotify) profileFields.social.spotify = spotify;
-    if (soundcloud) profileFields.social.soundcloud = soundcloud;
-    if (itunes) profileFields.social.itunes = itunes;
+    if (facebook) profileFields.social.facebook = checkUrl(facebook);
+    if (instagram) profileFields.social.instagram = checkUrl(instagram);
+    if (twitter) profileFields.social.twitter = checkUrl(twitter);
+    if (youtube) profileFields.social.youtube = checkUrl(youtube);
+    if (spotify) profileFields.social.spotify = checkUrl(spotify);
+    if (soundcloud) profileFields.social.soundcloud = checkUrl(soundcloud);
+    if (itunes) profileFields.social.itunes = checkUrl(itunes);
 
     // Check if profile exists.
     try {
@@ -254,37 +262,22 @@ router.put("/follow/:user_id", auth, async (req, res) => {
       follower => follower.user.toString() === profile.user._id.toString()
     );
 
-    let toFollowInfo = {
-      profileId: userToFollow._id,
-      instruments: userToFollow.instruments,
-      status: userToFollow.status,
-      location: userToFollow.location
-    };
-    let followerInfo = {
-      profileId: profile._id,
-      instruments: profile.instruments,
-      status: profile.status,
-      location: profile.location
-    };
     if (!alreadyFollowing.length) {
       const newFollowing = {
         user: userToFollow.user._id,
         name: userToFollow.user.name,
-        avatar: userToFollow.user.avatar,
-        info: toFollowInfo
+        avatar: userToFollow.user.avatar
       };
       const newFollower = {
         user: profile.user._id,
         name: profile.user.name,
-        avatar: profile.user.avatar,
-        info: followerInfo
+        avatar: profile.user.avatar
       };
       profile.following.unshift(newFollowing);
       userToFollow.followers.unshift(newFollower);
 
       await profile.save();
       await userToFollow.save();
-      console.log(newFollowing);
       return res.status(200).json(profile);
     }
 

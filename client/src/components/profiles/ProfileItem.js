@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Fragment } from "react";
 import { Link } from "react-router-dom";
 import PropTypes from "prop-types";
 
@@ -18,12 +18,12 @@ const ProfileItem = ({
         <div>
           {status.map((item, i) =>
             i + 1 !== status.length ? (
-              <>
+              <Fragment key={i}>
                 {item}
                 {", "}
-              </>
+              </Fragment>
             ) : (
-              <>{item}</>
+              <Fragment key={i}>{item}</Fragment>
             )
           )}
         </div>
@@ -33,7 +33,7 @@ const ProfileItem = ({
         </Link>
       </div>
       <ul>
-        {instruments.slice(0, 4).map((instrument, i) => (
+        {instruments.map((instrument, i) => (
           <li key={i} className="text-primary">
             {instrument}
           </li>

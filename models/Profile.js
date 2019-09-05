@@ -68,9 +68,6 @@ const ProfileSchema = new mongoose.Schema({
       },
       avatar: {
         type: String
-      },
-      info: {
-        type: Object
       }
     }
   ],
@@ -85,9 +82,6 @@ const ProfileSchema = new mongoose.Schema({
       },
       avatar: {
         type: String
-      },
-      info: {
-        type: Object
       }
     }
   ]
