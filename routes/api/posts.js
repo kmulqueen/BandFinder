@@ -125,6 +125,26 @@ router.delete("/:id", auth, async (req, res) => {
   }
 });
 
+// GET api/posts/user/:user_id
+// Get posts by user
+// Private
+router.get("/user/:user_id", auth, async (req, res) => {
+  try {
+    const posts = await Post.find({ user: req.params.user_id });
+
+    if (!posts.length) {
+      return res.status(404).json({
+        msg: "This user has not posted anything."
+      });
+    }
+
+    res.json(posts);
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).send("Server Error.");
+  }
+});
+
 // PUT api/posts/like/:id
 // Add Likes to post
 // Private
