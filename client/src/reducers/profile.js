@@ -21,8 +21,6 @@ export default function(state = initialState, action) {
   switch (type) {
     case GET_PROFILE:
     case GET_CURRENT_FOLLOW_INFO:
-    case FOLLOW_USER:
-    case UNFOLLOW_USER:
       return {
         ...state,
         profile: payload,
@@ -44,6 +42,17 @@ export default function(state = initialState, action) {
       return {
         ...state,
         profile: null,
+        loading: false
+      };
+    case FOLLOW_USER:
+    case UNFOLLOW_USER:
+      state.profiles.map(profile => {
+        if (profile.user._id === payload.userId) {
+          profile.followers = payload.followers.followers;
+        }
+      });
+      return {
+        ...state,
         loading: false
       };
 

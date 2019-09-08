@@ -20,7 +20,7 @@ const Profile = ({
   useEffect(() => {
     getProfileById(match.params.id);
     getUserPosts(match.params.id);
-  }, [getProfileById, match.params.id]);
+  }, [getProfileById, match.params.id, getUserPosts]);
 
   return (
     <Fragment>
