@@ -55,6 +55,7 @@ const Dashboard = ({
             <Followers
               displayFollowers={displayFollowers}
               followers={profile.followers}
+              following={profile.following}
             />
             <Following
               displayFollowing={displayFollowing}

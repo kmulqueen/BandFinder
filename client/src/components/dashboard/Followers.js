@@ -2,7 +2,7 @@ import React from "react";
 import FollowItem from "./FollowItem";
 import PropTypes from "prop-types";
 
-const Followers = ({ displayFollowers, followers }) => {
+const Followers = ({ displayFollowers, followers, following }) => {
   return (
     <div className="profiles">
       {displayFollowers && followers.length ? (
@@ -15,6 +15,7 @@ const Followers = ({ displayFollowers, followers }) => {
             instruments={follower.instruments}
             status={follower.status}
             location={follower.location}
+            following={following}
           />
         ))
       ) : displayFollowers && !followers.length ? (

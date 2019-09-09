@@ -1,6 +1,7 @@
 import React, { Fragment } from "react";
 import PropTypes from "prop-types";
 import FollowItem from "./FollowItem";
+import ProfileItem from "../profiles/ProfileItem";
 
 const Following = ({ displayFollowing, following }) => {
   return (
@@ -16,6 +17,7 @@ const Following = ({ displayFollowing, following }) => {
               instruments={follow.instruments}
               status={follow.status}
               location={follow.location}
+              following={following}
             />
           ))
         ) : displayFollowing && !following.length ? (
