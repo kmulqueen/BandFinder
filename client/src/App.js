@@ -55,8 +55,8 @@ const App = () => {
                 path="/edit-profile"
                 component={EditProfile}
               />
-              <Route exact path="/profiles" component={Profiles} />
-              <Route exact path="/profile/:id" component={Profile} />
+              <PrivateRoute exact path="/profiles" component={Profiles} />
+              <PrivateRoute exact path="/profile/:id" component={Profile} />
               <PrivateRoute exact path="/posts" component={Posts} />
               <PrivateRoute exact path="/posts" component={Posts} />
               <PrivateRoute exact path="/post/:id" component={Post} />

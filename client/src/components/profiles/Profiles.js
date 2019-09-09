@@ -2,13 +2,18 @@ import React, { Fragment, useEffect } from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import Spinner from "../layout/Spinner";
-import { getAllProfiles } from "../../actions/profile";
+import { getAllProfiles, getCurrentProfile } from "../../actions/profile";
 import ProfileItem from "./ProfileItem";
 
-const Profiles = ({ profile: { profiles, loading }, getAllProfiles }) => {
+const Profiles = ({
+  profile: { profile, profiles, loading },
+  getAllProfiles,
+  getCurrentProfile
+}) => {
   useEffect(() => {
     getAllProfiles();
-  }, [getAllProfiles]);
+    getCurrentProfile();
+  }, [getAllProfiles, getCurrentProfile]);
 
   return (
     <Fragment>
@@ -22,9 +27,13 @@ const Profiles = ({ profile: { profiles, loading }, getAllProfiles }) => {
             experts
           </p>
           <div className="profiles">
-            {profiles.length ? (
-              profiles.map(profile => (
-                <ProfileItem key={profile._id} profile={profile} />
+            {profiles.length && profile !== null ? (
+              profiles.map(item => (
+                <ProfileItem
+                  key={item._id}
+                  profile={item}
+                  following={profile.following}
+                />
               ))
             ) : (
               <h4>No profiles found</h4>
@@ -38,6 +47,7 @@ const Profiles = ({ profile: { profiles, loading }, getAllProfiles }) => {
 
 Profiles.propTypes = {
   getAllProfiles: PropTypes.func.isRequired,
+  getCurrentProfile: PropTypes.func.isRequired,
   profile: PropTypes.object.isRequired
 };
 
@@ -47,5 +57,5 @@ const mapStateToProps = state => ({
 
 export default connect(
   mapStateToProps,
-  { getAllProfiles }
+  { getAllProfiles, getCurrentProfile }
 )(Profiles);

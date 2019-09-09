@@ -97,6 +97,7 @@ router.post(
     }
     if (projects) {
       profileFields.projects = projects
+        .toString()
         .split(",")
         .map(project => project.trim());
     }

@@ -1,4 +1,4 @@
-import React, { Fragment } from "react";
+import React, { Fragment, useEffect } from "react";
 import { Link } from "react-router-dom";
 import PropTypes from "prop-types";
 import { followUser, unfollowUser } from "../../actions/profile";
@@ -14,10 +14,10 @@ const ProfileItem = ({
   },
   followUser,
   unfollowUser,
-  auth
+  auth,
+  following
 }) => {
   const handleFollow = e => {
-    console.log(e.target.innerHTML);
     if (e.target.innerHTML === "Follow User") {
       followUser(_id);
       window.location.reload();
@@ -26,6 +26,10 @@ const ProfileItem = ({
       window.location.reload();
     }
   };
+
+  // Check to see which profiles the logged in user is following
+  const isFollowing = following.filter(follow => follow.user === _id);
+
   return (
     <div className="profile bg-light">
       <img src={avatar} alt={`${name}`} className="round-img" />
@@ -47,31 +51,23 @@ const ProfileItem = ({
         <Link to={`/profile/${_id}`} className="btn btn-primary">
           View Profile
         </Link>
-        {followers.length ? (
-          followers.map(
-            (follow, i) =>
-              follow.user === auth.user._id && (
-                <Link
-                  to="/profiles"
-                  className="btn btn-primary"
-                  type="button"
-                  onClick={e => handleFollow(e)}
-                  key={i}
-                >
-                  Unfollow User
-                </Link>
-              )
-          )
-        ) : (
+        {auth.user._id === _id ? null : isFollowing.length ? (
           <Link
-            to="/profiles"
             className="btn btn-primary"
-            type="button"
+            to="/profiles"
+            onClick={e => handleFollow(e)}
+          >
+            Unfollow User
+          </Link>
+        ) : !isFollowing.length ? (
+          <Link
+            className="btn btn-primary"
+            to="/profiles"
             onClick={e => handleFollow(e)}
           >
             Follow User
           </Link>
-        )}
+        ) : null}
       </div>
       <ul>
         {instruments.map((instrument, i) => (

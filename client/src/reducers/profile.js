@@ -48,7 +48,9 @@ export default function(state = initialState, action) {
     case UNFOLLOW_USER:
       state.profiles.map(profile => {
         if (profile.user._id === payload.userId) {
-          profile.followers = payload.followers.followers;
+          return (profile.followers = payload.followers.followers);
+        } else {
+          return profile;
         }
       });
       return {

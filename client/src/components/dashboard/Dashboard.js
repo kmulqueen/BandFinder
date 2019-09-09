@@ -11,6 +11,7 @@ import Spinner from "../layout/Spinner";
 import DashboardActions from "./DashboardActions";
 import Followers from "./Followers";
 import Following from "./Following";
+import PostFeed from "./PostFeed";
 
 const Dashboard = ({
   getCurrentProfile,
@@ -60,6 +61,19 @@ const Dashboard = ({
               following={profile.following}
             />
           </div>
+          <div className="posts">
+            {profile.following.length ? (
+              <PostFeed following={profile.following} />
+            ) : (
+              <Fragment>
+                <h4 className="text-primary">Feed</h4>
+                <p>
+                  <i className="fas fa-comments"></i> Follow other users to see
+                  their posts in your feed
+                </p>
+              </Fragment>
+            )}
+          </div>
         </Fragment>
       ) : (
         <Fragment>
@@ -77,6 +91,7 @@ const Dashboard = ({
       )}
 
       <div className="my-2">
+        <h1 className="medium text-primary">Account Actions</h1>
         <button className="btn btn-danger" onClick={() => deleteAccount()}>
           <i className="fas fa-user-minus"></i> Delete My Account
         </button>
