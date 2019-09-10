@@ -1,12 +1,9 @@
 const express = require("express");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const gravatar = require('gravatar');
+const gravatar = require("gravatar");
 const config = require("config");
-const {
-  check,
-  validationResult
-} = require("express-validator");
+const { check, validationResult } = require("express-validator");
 const router = express.Router();
 const User = require("../../models/User");
 
@@ -21,8 +18,8 @@ router.post(
   // Express-Validator Checks
   [
     check("name", "Name is required")
-    .not()
-    .isEmpty(),
+      .not()
+      .isEmpty(),
     check("email", "Please include a valid email").isEmail(),
     check(
       "password",
@@ -41,11 +38,7 @@ router.post(
       });
     }
 
-    const {
-      name,
-      email,
-      password
-    } = req.body;
+    const { name, email, password } = req.body;
 
     // Check if user already exists by email in DB, if not create new user
     try {
@@ -53,20 +46,20 @@ router.post(
         email
       });
       if (user) {
-        return res
-          .status(400)
-          .json({
-            errors: [{
+        return res.status(400).json({
+          errors: [
+            {
               msg: "User with that email already exists"
-            }]
-          });
+            }
+          ]
+        });
       }
 
       const avatar = gravatar.url(email, {
-        s: '200',
-        r: 'pg',
-        d: 'mm'
-      })
+        s: "200",
+        r: "pg",
+        d: "mm"
+      });
 
       user = new User({
         name,
@@ -92,9 +85,9 @@ router.post(
       // Pass in payload, secret, additional options
       jwt.sign(
         payload,
-        config.get("jwtSecret"), {
-          // cHANGE TO 3600 <<<<<<<<<<<<<<<<<<<========================== TODO TODO TODO TODO
-          expiresIn: 3600000000000000000
+        config.get("jwtSecret"),
+        {
+          expiresIn: 3600
         },
         (err, token) => {
           // Send back token
