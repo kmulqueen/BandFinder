@@ -8,7 +8,8 @@ import {
   PROFILE_ERROR,
   DELETE_ACCOUNT,
   CLEAR_PROFILE,
-  GET_CURRENT_FOLLOW_INFO
+  GET_CURRENT_FOLLOW_INFO,
+  SEARCH_PROFILES
 } from "./types";
 
 // Get Current User Profile
@@ -71,6 +72,89 @@ export const getAllProfiles = () => async dispatch => {
     dispatch({
       type: GET_PROFILES,
       payload: res.data
+    });
+  } catch (error) {
+    dispatch({
+      type: PROFILE_ERROR,
+      payload: { msg: error.response.statusText, status: error.response.status }
+    });
+  }
+};
+
+// Search Profiles by Instrument
+export const searchByInstrument = term => async dispatch => {
+  try {
+    const res = await axios.get("/api/profile");
+    let profiles = [];
+
+    res.data.map(item => {
+      let comparableValues = [];
+      const iterator = item.instruments.values();
+      for (const value of iterator) {
+        comparableValues.push(value.toLowerCase());
+      }
+      comparableValues.includes(term.toLowerCase()) && profiles.push(item);
+    });
+    if (!profiles.length) {
+      profiles = res.data;
+    }
+    dispatch({
+      type: SEARCH_PROFILES,
+      payload: profiles
+    });
+  } catch (error) {
+    dispatch({
+      type: PROFILE_ERROR,
+      payload: { msg: error.response.statusText, status: error.response.status }
+    });
+  }
+};
+
+// Search Profiles by Status
+export const searchByStatus = term => async dispatch => {
+  try {
+    const res = await axios.get("/api/profile");
+    let profiles = [];
+
+    res.data.map(item => {
+      let comparableValues = [];
+      const iterator = item.status.values();
+      for (const value of iterator) {
+        comparableValues.push(value.toLowerCase());
+      }
+      comparableValues.includes(term.toLowerCase()) && profiles.push(item);
+    });
+    if (!profiles.length) {
+      profiles = res.data;
+    }
+    dispatch({
+      type: SEARCH_PROFILES,
+      payload: profiles
+    });
+  } catch (error) {
+    dispatch({
+      type: PROFILE_ERROR,
+      payload: { msg: error.response.statusText, status: error.response.status }
+    });
+  }
+};
+
+// Search Profiles by Name
+export const searchByName = term => async dispatch => {
+  try {
+    const res = await axios.get("/api/profile");
+    let profiles = [];
+
+    res.data.map(item => {
+      let name = item.user.name.toLowerCase();
+      term.toLowerCase() === name && profiles.push(item);
+    });
+    if (!profiles.length) {
+      profiles = res.data;
+    }
+    dispatch({
+      type: SEARCH_PROFILES,
+      payload: profiles
     });
   } catch (error) {
     dispatch({

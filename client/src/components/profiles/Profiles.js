@@ -1,9 +1,10 @@
-import React, { Fragment, useEffect } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import Spinner from "../layout/Spinner";
 import { getAllProfiles, getCurrentProfile } from "../../actions/profile";
 import ProfileItem from "./ProfileItem";
+import SearchBar from "./SearchBar";
 
 const Profiles = ({
   profile: { profile, profiles, loading },
@@ -14,6 +15,12 @@ const Profiles = ({
     getAllProfiles();
     getCurrentProfile();
   }, [getAllProfiles, getCurrentProfile]);
+
+  const [displaySearchBar, toggleSearchBar] = useState(false);
+
+  const showSearchBar = () => {
+    toggleSearchBar(!displaySearchBar);
+  };
 
   return (
     <Fragment>
@@ -27,6 +34,15 @@ const Profiles = ({
             experts
           </p>
           <div className="profiles">
+            <button
+              className="btn btn-dark my-1"
+              type="button"
+              onClick={showSearchBar}
+            >
+              Filter Profiles
+            </button>
+            {displaySearchBar ? <SearchBar /> : null}
+
             {profiles.length && profile !== null ? (
               profiles.map(item => (
                 <ProfileItem
@@ -36,7 +52,7 @@ const Profiles = ({
                 />
               ))
             ) : (
-              <h4>No profiles found</h4>
+              <Spinner />
             )}
           </div>
         </Fragment>

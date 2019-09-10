@@ -30,6 +30,8 @@ const EditProfile = ({
   const [checkbox, setCheckbox] = useState({
     musician: false,
     band: false,
+    producer: false,
+    engineer: false,
     manager: false,
     teacher: false,
     promoter: false,
@@ -54,7 +56,16 @@ const EditProfile = ({
     soundcloud,
     itunes
   } = formData;
-  const { musician, band, manager, teacher, promoter, client } = checkbox;
+  const {
+    musician,
+    band,
+    producer,
+    engineer,
+    manager,
+    teacher,
+    promoter,
+    client
+  } = checkbox;
 
   const handleCheck = e => {
     setCheckbox({ ...checkbox, [e.target.name]: e.target.checked });
@@ -148,6 +159,26 @@ const EditProfile = ({
               onChange={handleCheck}
             />
             <label htmlFor="Band">Band</label>
+          </div>
+          <div>
+            <input
+              type="checkbox"
+              value="Producer"
+              name="producer"
+              checked={producer}
+              onChange={handleCheck}
+            />
+            <label htmlFor="Producer">Producer</label>
+          </div>
+          <div>
+            <input
+              type="checkbox"
+              value="Engineer"
+              name="engineer"
+              checked={engineer}
+              onChange={handleCheck}
+            />
+            <label htmlFor="Engineer">Engineer</label>
           </div>
           <div>
             <input

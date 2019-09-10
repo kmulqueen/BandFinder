@@ -5,7 +5,8 @@ import {
   UNFOLLOW_USER,
   PROFILE_ERROR,
   CLEAR_PROFILE,
-  GET_CURRENT_FOLLOW_INFO
+  GET_CURRENT_FOLLOW_INFO,
+  SEARCH_PROFILES
 } from "../actions/types";
 
 const initialState = {
@@ -27,6 +28,7 @@ export default function(state = initialState, action) {
         loading: false
       };
     case GET_PROFILES:
+    case SEARCH_PROFILES:
       return {
         ...state,
         profiles: payload,
