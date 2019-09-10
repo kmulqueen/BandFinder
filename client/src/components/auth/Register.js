@@ -27,7 +27,6 @@ const Register = ({ setAlert, register, isAuthenticated }) => {
     }
   };
 
-  // If user registration was successful, redirect user to dashboard
   if (isAuthenticated) {
     return <Redirect to="/dashboard" />;
   }
@@ -58,6 +57,15 @@ const Register = ({ setAlert, register, isAuthenticated }) => {
             placeholder="Email"
           />
         </div>
+        <small>
+          This site uses Gravatar. If you want a profile picture, please{" "}
+          <a
+            href="https://en.gravatar.com/support/how-to-sign-up/"
+            target="blank"
+          >
+            register your email with Gravatar.
+          </a>
+        </small>
         <div className="form-group">
           <input
             type="password"
