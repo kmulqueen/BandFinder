@@ -3,7 +3,7 @@
 Band Finder is a full stack social media application designed to connect people in the music industry. Users create accounts and
 connect with other users through posts and comments, as well as follow other users to always stay up to date. Any posts from profiles that the user follows will populate in the user's dashboard.
 
-[Band Finder App](https://evening-forest-04109.herokuapp.com/)
+Check out the app [here!](https://evening-forest-04109.herokuapp.com/)
 ![Band Finder Landing Page](/images/bandfinder-landingpage.png)
 
 ### Dashboard
