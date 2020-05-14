@@ -14,7 +14,7 @@ The dashboard allows users to edit/update their profile, manage their following,
 
 ### Community
 
-All Band Finder users can be found on the Community page. From here users are able to view other users profiles and follow other users. The profile cards that appear on the Community page show the user's name, skills, and location.
+All Band Finder users can be found on the Community page. From here users are able to view other users profiles and follow other users. There is a filter option where users can filter profiles by name, instrument, or status. The profile cards that appear on the Community page show the user's name, skills, and location.
 
 ![Band Finder Community](/images/bandfinder-community1.png)
 
